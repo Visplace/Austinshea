@@ -1,0 +1,16 @@
+export const skills: string[] = [
+  'MRI',
+  'Yardi',
+  'Excel',
+  'PowerPoint',
+  'Lease administration',
+  'CAM reconciliations',
+  'Budgeting',
+  'Variance analysis',
+  'Rent roll review',
+  'Financial modeling',
+  'Contract interpretation',
+  'Property operations',
+  'Underwriting',
+  'Asset-level reporting',
+]
