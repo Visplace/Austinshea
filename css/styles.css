@@ -1001,6 +1001,10 @@ a {
   background: #eef6f0;
   border-color: #cfe6d6;
 }
+.form-status.is-error {
+  background: #fdecea;
+  border-color: #f5c2c0;
+}
 .form-status a {
   color: var(--accent);
   font-weight: 600;

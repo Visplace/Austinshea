@@ -265,13 +265,13 @@ function revealDynamic() {
 }
 
 /* ------------------------------------------------------------
-   Contact form validation
-   Honest behavior: on a valid submit we confirm the details are
-   ready and hand off to the visitor's email client via a prefilled
-   mailto link. We never claim the message was delivered, because
-   this static form is not connected to a mail service.
+   Contact form validation + submission
+   The form posts to Formspree via fetch. On success we show a real
+   confirmation; on failure we fall back to a direct email link. The
+   <form> also has a native action/method so it still works without JS.
    ------------------------------------------------------------ */
 const CONTACT_EMAIL = "austindshea01@gmail.com";
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/mwvgzgdj";
 
 function initContactForm() {
   const form = document.getElementById("contact-form");
@@ -305,7 +305,18 @@ function initContactForm() {
     });
   });
 
-  form.addEventListener("submit", (event) => {
+  const submitBtn = form.querySelector('button[type="submit"]');
+
+  const setStatus = (message, kind) => {
+    if (!status) return;
+    status.hidden = false;
+    status.classList.remove("is-success", "is-error");
+    if (kind) status.classList.add(kind);
+    if (message.html) status.innerHTML = message.html;
+    else status.textContent = message.text;
+  };
+
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
     let firstInvalid = null;
     let valid = true;
@@ -326,33 +337,53 @@ function initContactForm() {
       return;
     }
 
-    // Build a prefilled mailto so the visitor can actually send it.
-    const data = new FormData(form);
-    const subjectLine = `[${data.get("inquiry")}] ${data.get("subject")}`;
-    const bodyLines = [
-      `Name: ${data.get("name")}`,
-      `Email: ${data.get("email")}`,
-      data.get("company") ? `Company: ${data.get("company")}` : null,
-      `Inquiry type: ${data.get("inquiry")}`,
-      "",
-      String(data.get("message") || ""),
-    ].filter((line) => line !== null);
-
-    const mailto =
-      `mailto:${CONTACT_EMAIL}` +
-      `?subject=${encodeURIComponent(subjectLine)}` +
-      `&body=${encodeURIComponent(bodyLines.join("\n"))}`;
-
-    if (status) {
-      status.hidden = false;
-      status.classList.add("is-success");
-      status.innerHTML =
-        `Your message is ready. This form isn&rsquo;t connected to a mail service, so it will open in your email app to send. ` +
-        `If nothing opens, email <a href="mailto:${CONTACT_EMAIL}">${CONTACT_EMAIL}</a> directly.`;
+    const originalLabel = submitBtn ? submitBtn.textContent : "";
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Sending…";
     }
+    setStatus({ text: "Sending your message…" });
 
-    // Hand off to the email client.
-    window.location.href = mailto;
+    try {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
+        method: "POST",
+        body: new FormData(form),
+        headers: { Accept: "application/json" },
+      });
+
+      if (response.ok) {
+        form.reset();
+        setStatus(
+          { text: "Thanks — your message has been sent. I’ll be in touch soon." },
+          "is-success",
+        );
+      } else {
+        let detail = "";
+        try {
+          const data = await response.json();
+          if (data && Array.isArray(data.errors) && data.errors.length) {
+            detail = " " + data.errors.map((e) => e.message).join(" ");
+          }
+        } catch (_ignored) {
+          /* non-JSON error response */
+        }
+        throw new Error(detail);
+      }
+    } catch (_error) {
+      setStatus(
+        {
+          html:
+            `Sorry — your message couldn’t be sent just now. Please email ` +
+            `<a href="mailto:${CONTACT_EMAIL}">${CONTACT_EMAIL}</a> directly.`,
+        },
+        "is-error",
+      );
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalLabel;
+      }
+    }
   });
 }
 

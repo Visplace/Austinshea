@@ -738,7 +738,22 @@
             </ul>
           </div>
 
-          <form class="contact-form reveal" id="contact-form" novalidate>
+          <form
+            class="contact-form reveal"
+            id="contact-form"
+            action="https://formspree.io/f/mwvgzgdj"
+            method="POST"
+            novalidate
+          >
+            <!-- Spam honeypot: bots fill this; real users never see it -->
+            <input
+              type="text"
+              name="_gotcha"
+              tabindex="-1"
+              autocomplete="off"
+              aria-hidden="true"
+              style="position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0"
+            />
             <div class="field">
               <label for="name">Name</label>
               <input type="text" id="name" name="name" autocomplete="name" required />
@@ -784,7 +799,7 @@
               <p class="field-error" data-error-for="message" role="alert"></p>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-block">Prepare message</button>
+            <button type="submit" class="btn btn-primary btn-block">Send message</button>
 
             <div class="form-status" id="form-status" role="status" aria-live="polite" hidden></div>
           </form>

@@ -41,11 +41,14 @@ update them if the site is hosted elsewhere.
 
 ## Contact form
 
-Client-side validation only. On a valid submit it opens the visitor's email
-client with a prefilled message (mailto) — it does **not** claim delivery,
-because the form is not connected to a backend. To wire it to a real service
-(Formspree, Basin, a serverless function, etc.), replace the submit handler in
-`js/main.js`.
+Client-side validation, then submission to **Formspree**
+(`https://formspree.io/f/mwvgzgdj`) via `fetch`. On success the visitor sees a
+real confirmation; if the request fails, they get a direct-email fallback. The
+`<form>` also carries a native `action`/`method`, so it still submits if
+JavaScript is unavailable. A hidden `_gotcha` honeypot field filters spam.
+
+To change the destination, update `FORMSPREE_ENDPOINT` in `js/main.js` and the
+form's `action` attribute in `index.html`.
 
 ## Preview locally
 
