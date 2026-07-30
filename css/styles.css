@@ -790,6 +790,23 @@ a {
   font-size: 0.9rem;
   font-weight: 500;
   color: var(--ink);
+  /* reset so a <button> trigger matches the link styling */
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+.insight-card.is-clickable {
+  position: relative;
+}
+/* stretched-link: the trigger's overlay makes the whole card clickable */
+.insight-readlink--trigger::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
 }
 .insight-readlink[aria-disabled="true"] {
   color: var(--slate-soft);
@@ -801,6 +818,117 @@ a {
 }
 .insight-readlink:hover .arrow {
   transform: translate(2px, -2px);
+}
+
+/* ---------- 14b. Article reader modal ---------- */
+.article-modal {
+  width: min(680px, calc(100% - 32px));
+  max-height: 86vh;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: 0 30px 90px rgba(5, 26, 36, 0.4);
+  overflow: hidden;
+}
+.article-modal[open] {
+  display: flex;
+  flex-direction: column;
+}
+.article-modal::backdrop {
+  background: rgba(5, 26, 36, 0.55);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+.article-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--panel);
+  color: var(--ink);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.18s var(--ease);
+}
+.article-modal-close:hover {
+  background: var(--panel-2);
+}
+.article-modal-inner {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: clamp(28px, 4.5vw, 52px);
+  padding-top: clamp(40px, 5vw, 56px);
+}
+.article-modal-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.article-modal-cat {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.article-modal-meta {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--slate-soft);
+}
+.article-modal-title {
+  font-size: clamp(1.6rem, 3.6vw, 2.3rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--ink-2);
+  margin-bottom: 22px;
+}
+.article-modal-content p {
+  color: rgba(5, 26, 36, 0.82);
+  font-size: 1.02rem;
+  line-height: 1.68;
+  margin-bottom: 1.1em;
+}
+.article-help {
+  margin-top: 28px;
+  padding: 22px 24px;
+  background: var(--panel);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--accent);
+}
+.article-help-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--slate);
+  margin-bottom: 8px !important;
+}
+.article-help p:last-child {
+  margin-bottom: 0 !important;
+}
+
+@media (max-width: 620px) {
+  .article-modal {
+    width: 100%;
+    max-width: 100%;
+    max-height: 92vh;
+    margin: auto auto 0;
+    border-radius: 20px 20px 0 0;
+  }
 }
 
 /* ---------- 15. About ---------- */

@@ -13,9 +13,12 @@
 /* ------------------------------------------------------------
    INSIGHTS DATA
    Add a new article by appending an object to this array.
-   Set `status: "published"` and provide `date` + `url` once an
-   article is live; leave `status: "coming-soon"` otherwise so the
-   card shows "Coming Soon" instead of a fabricated date.
+   - Published article: set `status: "published"` and provide `body`
+     (array of paragraphs). It opens in an on-page reader modal.
+   - Upcoming article: leave `status: "coming-soon"` (no body) so the
+     card shows "Coming Soon" instead of a fabricated date.
+   The card shows an estimated read time derived from the body — no
+   publication dates are invented.
 
    Only the first VISIBLE_INSIGHTS cards are shown so the section
    doesn't read as unfinished. Raise this as articles are published.
@@ -27,27 +30,46 @@ const insights = [
     category: "Lease Administration",
     summary:
       "Lease abstraction decisions directly affect billing, recoveries, and reporting. A look at why careful reading beats speed.",
-    status: "coming-soon",
-    date: null,
-    url: null,
+    status: "published",
+    body: [
+      "Lease abstraction is often treated as a data-entry exercise, but every abstracted term can affect billing, recoveries, reporting, and compliance.",
+      "A commencement date drives rent schedules and option periods. A missed expense cap can overstate recoveries. An incorrect square-footage figure can distort a tenant’s share of operating expenses. Even a small error in an amendment reference can create confusion when accounting or property management relies on the abstract.",
+      "A strong abstraction does more than summarize a lease. It translates the governing documents into clear, usable financial and operational requirements.",
+    ],
+    help:
+      "Austin reviews leases and amendments with a focus on how each term affects billing, recoveries, reporting, and day-to-day property operations. His approach emphasizes accuracy, traceability, and practical implementation.",
   },
   {
     title: "How CAM Caps Affect Tenant Recoveries",
     category: "Recoveries",
     summary:
       "Cumulative and compounding caps reshape recoverable expense year over year. Here is how the mechanics work.",
-    status: "coming-soon",
-    date: null,
-    url: null,
+    status: "published",
+    body: [
+      "CAM caps limit how quickly certain operating expenses may increase from year to year. While the concept sounds simple, the calculation can vary significantly depending on the lease.",
+      "A cap may be cumulative or noncumulative, compounding or noncompounding, and may apply only to controllable expenses. Taxes, insurance, utilities, snow removal, and other categories are often excluded.",
+      "The result also depends on the correct base year and whether unused increases carry forward. Applying the wrong methodology can materially change the tenant’s share.",
+      "A defensible recovery calculation should identify the capped expense pool, exclusions, prior-year amount, permitted increase, and final recoverable total.",
+    ],
+    help:
+      "Austin analyzes lease-specific recovery structures, tests calculations against the governing documents, and helps identify discrepancies between lease requirements, operating expenses, and tenant billing.",
   },
   {
     title: "Understanding Percentage Rent and Natural Breakpoints",
     category: "Financial Analysis",
     summary:
       "Natural breakpoints, contractual breakpoints, and reporting timing interact in ways that change what a tenant owes.",
-    status: "coming-soon",
-    date: null,
-    url: null,
+    status: "published",
+    body: [
+      "Percentage rent allows a landlord to receive additional rent when a tenant’s sales exceed a defined threshold, known as the breakpoint.",
+      "Some leases state a fixed contractual breakpoint. Others use a natural breakpoint, which is calculated by dividing annual base rent by the percentage-rent rate. For example, if annual base rent is $100,000 and the percentage-rent rate is 5%, the natural breakpoint is $2,000,000.",
+      "That formula is straightforward, but the actual calculation often is not.",
+      "The lease may use a sales year that differs from the calendar year. It may exclude certain types of revenue, allow deductions, require monthly or annual reporting, or provide different treatment for returns, taxes, online sales, or affiliated businesses. Amendments may also change the base rent, percentage rate, reporting period, or breakpoint without clearly restating every related provision.",
+      "Timing matters as well. A tenant may report sales monthly but only owe percentage rent after the full sales year ends. In other cases, estimated payments may be required throughout the year, followed by a reconciliation.",
+      "A proper review should confirm the governing lease and amendments, annual base rent, applicable sales period, breakpoint method, percentage rate, permitted exclusions, reported sales, and billing timing. Even a small error in one input can materially change the amount due.",
+    ],
+    help:
+      "Austin reviews percentage-rent provisions alongside rent schedules, sales reports, and amendments to validate the applicable breakpoint, reporting period, and amount owed. His approach focuses on tracing the calculation back to the governing documents and identifying inconsistencies before they become billing or reporting issues.",
   },
   {
     title: "The Financial Importance of Commencement Dates",
@@ -55,8 +77,6 @@ const insights = [
     summary:
       "Commencement dates anchor rent schedules, abatements, and option windows. Small date errors carry outsized cost.",
     status: "coming-soon",
-    date: null,
-    url: null,
   },
   {
     title: "What Makes a Commercial Lease Reconciliation Defensible",
@@ -64,8 +84,6 @@ const insights = [
     summary:
       "A defensible reconciliation traces back to lease language, consistent methodology, and clean documentation.",
     status: "coming-soon",
-    date: null,
-    url: null,
   },
   {
     title: "Connecting Lease Administration to Asset Performance",
@@ -73,52 +91,120 @@ const insights = [
     summary:
       "Lease administration is often treated as back-office work. It is a direct input to property-level performance and risk.",
     status: "coming-soon",
-    date: null,
-    url: null,
   },
 ];
 
 /* ------------------------------------------------------------
    Render insights
    ------------------------------------------------------------ */
-function formatDate(iso) {
-  const parsed = new Date(iso);
-  if (Number.isNaN(parsed.getTime())) return "";
-  return parsed.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+function isPublished(article) {
+  return article.status === "published" && Array.isArray(article.body) && article.body.length > 0;
+}
+
+function readingTime(article) {
+  const words = [...(article.body || []), article.help || ""]
+    .join(" ")
+    .split(/\s+/)
+    .filter(Boolean).length;
+  return Math.max(1, Math.ceil(words / 200));
 }
 
 function renderInsights() {
   const grid = document.getElementById("insights-grid");
   if (!grid) return;
 
-  const cards = insights.slice(0, VISIBLE_INSIGHTS).map((article) => {
-    const isPublished = article.status === "published" && article.url;
-    const dateLabel = isPublished && article.date ? formatDate(article.date) : "Coming Soon";
+  const cards = insights.slice(0, VISIBLE_INSIGHTS).map((article, index) => {
+    const published = isPublished(article);
+    const metaLabel = published ? `${readingTime(article)} min read` : "Coming Soon";
 
-    const readLink = isPublished
-      ? `<a class="insight-readlink" href="${article.url}">Read Article <span class="arrow" aria-hidden="true">↗</span></a>`
+    const readControl = published
+      ? `<button type="button" class="insight-readlink insight-readlink--trigger" data-article-open="${index}">Read Article <span class="arrow" aria-hidden="true">↗</span></button>`
       : `<span class="insight-readlink" aria-disabled="true">Read Article <span class="arrow" aria-hidden="true">↗</span></span>`;
 
     const card = document.createElement("article");
-    card.className = "insight-card reveal";
+    card.className = "insight-card reveal" + (published ? " is-clickable" : "");
     card.innerHTML = `
       <div class="insight-meta">
         <span class="insight-category">${article.category}</span>
         <span class="insight-dot" aria-hidden="true"></span>
-        <span class="insight-date">${dateLabel}</span>
+        <span class="insight-date">${metaLabel}</span>
       </div>
       <h3 class="insight-title">${article.title}</h3>
       <p class="insight-summary">${article.summary}</p>
-      <div class="insight-foot">${readLink}</div>
+      <div class="insight-foot">${readControl}</div>
     `;
     return card;
   });
 
   grid.replaceChildren(...cards);
+}
+
+/* ------------------------------------------------------------
+   Article reader modal (native <dialog>)
+   ------------------------------------------------------------ */
+function initArticleModal() {
+  const grid = document.getElementById("insights-grid");
+  const modal = document.getElementById("article-modal");
+  if (!grid || !modal) return;
+
+  const catEl = modal.querySelector(".article-modal-cat");
+  const metaEl = modal.querySelector(".article-modal-meta");
+  const titleEl = modal.querySelector(".article-modal-title");
+  const contentEl = modal.querySelector(".article-modal-content");
+  const scroller = modal.querySelector(".article-modal-inner");
+  const closeBtn = modal.querySelector(".article-modal-close");
+  let lastFocused = null;
+
+  const openArticle = (index) => {
+    const article = insights[index];
+    if (!article || !isPublished(article) || modal.open) return;
+
+    catEl.textContent = article.category;
+    metaEl.textContent = `${readingTime(article)} min read`;
+    titleEl.textContent = article.title;
+
+    let html = article.body.map((p) => `<p>${p}</p>`).join("");
+    if (article.help) {
+      html +=
+        `<div class="article-help">` +
+        `<p class="article-help-label">How Austin can help</p>` +
+        `<p>${article.help}</p>` +
+        `</div>`;
+    }
+    contentEl.innerHTML = html;
+
+    lastFocused = document.activeElement;
+    if (typeof modal.showModal === "function") modal.showModal();
+    else modal.setAttribute("open", "");
+    document.body.style.overflow = "hidden";
+    if (scroller) scroller.scrollTop = 0;
+    if (closeBtn) closeBtn.focus();
+  };
+
+  const closeArticle = () => {
+    if (modal.open && typeof modal.close === "function") modal.close();
+    else modal.removeAttribute("open");
+  };
+
+  // Open from any card trigger (event delegation)
+  grid.addEventListener("click", (event) => {
+    const trigger = event.target.closest("[data-article-open]");
+    if (!trigger) return;
+    openArticle(Number(trigger.getAttribute("data-article-open")));
+  });
+
+  if (closeBtn) closeBtn.addEventListener("click", closeArticle);
+
+  // Click on the backdrop (the dialog element itself) closes
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) closeArticle();
+  });
+
+  // Restore scroll + focus whenever the dialog closes (button, Esc, backdrop)
+  modal.addEventListener("close", () => {
+    document.body.style.overflow = "";
+    if (lastFocused && typeof lastFocused.focus === "function") lastFocused.focus();
+  });
 }
 
 /* ------------------------------------------------------------
@@ -400,6 +486,7 @@ function initFooterYear() {
    ------------------------------------------------------------ */
 document.addEventListener("DOMContentLoaded", () => {
   renderInsights();
+  initArticleModal();
   initNav();
   initHeaderState();
   initScrollSpy();

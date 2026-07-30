@@ -847,6 +847,24 @@
       </div>
     </footer>
 
+    <!-- ============================================================
+         ARTICLE READER MODAL — populated by js/main.js
+         ============================================================ -->
+    <dialog id="article-modal" class="article-modal" aria-labelledby="article-modal-title">
+      <button type="button" class="article-modal-close" aria-label="Close article">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <div class="article-modal-inner">
+        <div class="article-modal-head">
+          <span class="article-modal-cat"></span>
+          <span class="insight-dot" aria-hidden="true"></span>
+          <span class="article-modal-meta"></span>
+        </div>
+        <h2 class="article-modal-title" id="article-modal-title"></h2>
+        <div class="article-modal-content"></div>
+      </div>
+    </dialog>
+
     <script src="js/main.js" defer></script>
   </body>
 </html>
