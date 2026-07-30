@@ -308,6 +308,7 @@ a {
 .wordmark-text {
   font-size: 1.08rem;
   color: var(--ink);
+  white-space: nowrap;
 }
 
 .primary-nav {
@@ -322,9 +323,10 @@ a {
 }
 .nav-link {
   display: inline-block;
-  padding: 9px 14px;
+  padding: 9px 12px;
   border-radius: 999px;
   font-size: 0.95rem;
+  white-space: nowrap;
   color: var(--slate);
   transition:
     color 0.18s var(--ease),
@@ -407,14 +409,19 @@ a {
   color: var(--ink-2);
   margin-bottom: 24px;
 }
-.hero-title .serif {
-  display: block;
+.hero-subhead {
+  max-width: 640px;
+  font-size: clamp(1.15rem, 2.4vw, 1.5rem);
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--slate);
+  margin-bottom: 26px;
 }
 .hero-lede {
   max-width: 620px;
-  font-size: clamp(1.05rem, 2vw, 1.22rem);
+  font-size: clamp(1.02rem, 1.8vw, 1.12rem);
   line-height: 1.6;
-  color: rgba(5, 26, 36, 0.82);
+  color: rgba(5, 26, 36, 0.78);
   margin-bottom: 32px;
 }
 .hero-actions {
@@ -1067,7 +1074,7 @@ a {
 }
 
 /* ---------- 19. Responsive ---------- */
-@media (max-width: 1000px) {
+@media (max-width: 1100px) {
   .expertise-grid,
   .work-grid,
   .insights-grid {
@@ -1086,7 +1093,7 @@ a {
   }
 }
 
-@media (max-width: 860px) {
+@media (max-width: 1100px) {
   .nav-cta {
     display: none;
   }

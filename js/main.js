@@ -16,13 +16,17 @@
    Set `status: "published"` and provide `date` + `url` once an
    article is live; leave `status: "coming-soon"` otherwise so the
    card shows "Coming Soon" instead of a fabricated date.
+
+   Only the first VISIBLE_INSIGHTS cards are shown so the section
+   doesn't read as unfinished. Raise this as articles are published.
    ------------------------------------------------------------ */
+const VISIBLE_INSIGHTS = 3
 const insights = [
   {
     title: "Why Lease Abstraction Is More Than Data Entry",
     category: "Lease Administration",
     summary:
-      "Abstraction decisions ripple into billing, recoveries, and reporting. A look at why careful reading beats speed.",
+      "Lease abstraction decisions directly affect billing, recoveries, and reporting. A look at why careful reading beats speed.",
     status: "coming-soon",
     date: null,
     url: null,
@@ -31,7 +35,7 @@ const insights = [
     title: "How CAM Caps Affect Tenant Recoveries",
     category: "Recoveries",
     summary:
-      "Cumulative and compounding caps quietly reshape recoverable expense year over year. Here is how the mechanics work.",
+      "Cumulative and compounding caps reshape recoverable expense year over year. Here is how the mechanics work.",
     status: "coming-soon",
     date: null,
     url: null,
@@ -91,7 +95,7 @@ function renderInsights() {
   const grid = document.getElementById("insights-grid");
   if (!grid) return;
 
-  const cards = insights.map((article) => {
+  const cards = insights.slice(0, VISIBLE_INSIGHTS).map((article) => {
     const isPublished = article.status === "published" && article.url;
     const dateLabel = isPublished && article.date ? formatDate(article.date) : "Coming Soon";
 
@@ -153,7 +157,7 @@ function initNav() {
   });
 
   // Close when resizing up to desktop
-  const desktop = window.matchMedia("(min-width: 861px)");
+  const desktop = window.matchMedia("(min-width: 1101px)");
   desktop.addEventListener("change", (event) => {
     if (event.matches) closeMenu();
   });
