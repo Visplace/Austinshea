@@ -473,7 +473,7 @@ a {
   will-change: transform;
 }
 .keyword-ticker.is-animated .keyword-track {
-  animation: keyword-scroll 55s linear infinite;
+  animation: keyword-scroll 90s linear infinite;
 }
 .keyword-ticker.is-animated:hover .keyword-track,
 .keyword-ticker.is-animated:focus-within .keyword-track {
