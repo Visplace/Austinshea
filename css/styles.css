@@ -446,52 +446,63 @@ a {
   gap: 14px;
   margin-bottom: 30px;
 }
-.credibility-line {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  letter-spacing: 0.04em;
-  color: var(--slate);
+/* Flowing keyword ticker — full-bleed, seamless loop, edge fade */
+.keyword-ticker {
+  position: relative;
+  width: 100%;
+  margin-top: clamp(30px, 4.5vw, 48px);
+  padding-block: 16px;
+  border-block: 1px solid var(--line-soft);
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 9%,
+    #000 91%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 91%, transparent 100%);
 }
-.cred-item {
+.keyword-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+.keyword-ticker.is-animated .keyword-track {
+  animation: keyword-scroll 55s linear infinite;
+}
+.keyword-ticker.is-animated:hover .keyword-track,
+.keyword-ticker.is-animated:focus-within .keyword-track {
+  animation-play-state: paused;
+}
+.keyword-group {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+.keyword {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  color: var(--slate);
   white-space: nowrap;
 }
-.credibility-line .cred-sep {
-  color: var(--line);
-  margin-inline: 6px;
+.keyword::after {
+  content: "|";
+  margin-inline: clamp(18px, 3.5vw, 38px);
+  color: rgba(5, 26, 36, 0.22);
+  font-weight: 400;
 }
-@media (max-width: 620px) {
-  .hero {
-    padding-bottom: 20px;
+
+@keyframes keyword-scroll {
+  from {
+    transform: translateX(0);
   }
-  .intro {
-    padding-top: 40px;
-  }
-  .credibility-line {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 14px;
-    width: 100%;
-    margin-top: 30px;
-    padding-top: 26px;
-    border-top: 1px solid var(--line-soft);
-  }
-  .credibility-line .cred-sep {
-    display: none;
-  }
-  .credibility-line .cred-item {
-    position: relative;
-    padding-left: 20px;
-  }
-  .credibility-line .cred-item::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 50%;
-    width: 7px;
-    height: 7px;
-    transform: translateY(-50%) rotate(45deg);
-    background: var(--accent);
+  to {
+    transform: translateX(-50%);
   }
 }
 

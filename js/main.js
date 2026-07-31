@@ -482,6 +482,29 @@ function initFooterYear() {
 }
 
 /* ------------------------------------------------------------
+   Keyword ticker
+   Clones the term group so the marquee can loop seamlessly (a -50%
+   transform lands exactly on the duplicate). Skipped when the user
+   prefers reduced motion — the terms then sit static (still in the
+   DOM for SEO).
+   ------------------------------------------------------------ */
+function initKeywordTicker() {
+  const ticker = document.querySelector(".keyword-ticker");
+  if (!ticker) return;
+  const track = ticker.querySelector(".keyword-track");
+  const group = ticker.querySelector(".keyword-group");
+  if (!track || !group) return;
+
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduced) return;
+
+  const clone = group.cloneNode(true);
+  clone.setAttribute("aria-hidden", "true");
+  track.appendChild(clone);
+  ticker.classList.add("is-animated");
+}
+
+/* ------------------------------------------------------------
    Fit the hero headline to a single line
    Measures the title against its container and scales the font so it
    stays on one line, capped at a max size. Re-runs on resize and once
@@ -528,4 +551,5 @@ document.addEventListener("DOMContentLoaded", () => {
   initContactForm();
   initFooterYear();
   initHeroFit();
+  initKeywordTicker();
 });
