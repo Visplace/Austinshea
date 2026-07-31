@@ -177,6 +177,10 @@ a {
   margin-bottom: 14px;
 }
 
+.eyebrow-loc {
+  white-space: nowrap;
+}
+
 .section-title {
   font-size: clamp(1.9rem, 4.2vw, 3rem);
   line-height: 1.08;
