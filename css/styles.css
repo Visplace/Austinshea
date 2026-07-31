@@ -464,10 +464,29 @@ a {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 5px;
+    gap: 12px;
+    width: 100%;
+    margin-top: 32px;
+    padding-top: 26px;
+    border-top: 1px solid var(--line-soft);
   }
   .credibility-line .cred-sep {
     display: none;
+  }
+  .credibility-line .cred-item {
+    position: relative;
+    padding-left: 18px;
+  }
+  .credibility-line .cred-item::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
   }
 }
 
