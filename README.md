@@ -27,16 +27,16 @@ assets/
   "Coming Soon" instead of a fabricated date. To publish, set
   `status: "published"` with a real `date` (ISO string) and `url`.
 
-## Before going live — one placeholder to replace
+## Assets in place
 
-1. **Social preview image** — the `og:image` / `twitter:image` tags point to
-   `assets/og-image.png` (1200×630 recommended). Add the file, or remove those
-   two meta tags if unused.
+- **Social preview image** — `assets/og-image.jpg` (1200×1200, optimized from
+  the source share card) is referenced by the `og:image` / `twitter:image`
+  tags for link previews (iMessage, etc.). The full-resolution source PNG is
+  also kept in `assets/`.
+- **Résumé** — `assets/Austin-Shea-Resume.pdf`, linked from the Contact section
+  and footer (`Download Résumé`).
 
-The résumé (`assets/Austin-Shea-Resume.pdf`) is in place and linked from the
-Contact section and footer (`Download Résumé`).
-
-The canonical URL and structured-data URLs use `https://austinshea.com/`;
+The canonical URL and structured-data URLs use `https://austin-shea.com/`;
 update them if the site is hosted elsewhere.
 
 ## Contact form
