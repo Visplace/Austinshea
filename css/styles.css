@@ -396,8 +396,12 @@ a {
 .hero {
   position: relative;
   padding-top: clamp(56px, 9vw, 104px);
-  padding-bottom: clamp(48px, 7vw, 88px);
+  padding-bottom: clamp(20px, 2.5vw, 28px);
   overflow: hidden;
+}
+/* Tighten the transition from the hero (ends with the ticker) into the intro */
+.intro {
+  padding-top: clamp(28px, 3.5vw, 44px);
 }
 .hero::before {
   /* soft analytical grid wash behind the hero */
