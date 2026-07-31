@@ -482,6 +482,39 @@ function initFooterYear() {
 }
 
 /* ------------------------------------------------------------
+   Fit the hero headline to a single line
+   Measures the title against its container and scales the font so it
+   stays on one line, capped at a max size. Re-runs on resize and once
+   the custom fonts have loaded (their metrics differ from fallbacks).
+   ------------------------------------------------------------ */
+function initHeroFit() {
+  const title = document.querySelector(".hero-title");
+  if (!title) return;
+
+  const MAX = 70; // px — matches the desktop cap (~4.4rem)
+  const MIN = 18; // px — floor so it never disappears on tiny screens
+
+  title.style.whiteSpace = "nowrap";
+
+  const fit = () => {
+    const available = title.clientWidth; // content-box width available for the line
+    if (!available) return;
+    title.style.fontSize = MAX + "px";
+    const textWidth = title.scrollWidth; // full one-line width at MAX
+    if (textWidth > available) {
+      const size = Math.max(MIN, Math.floor((MAX * available) / textWidth * 0.99));
+      title.style.fontSize = size + "px";
+    }
+  };
+
+  fit();
+  window.addEventListener("resize", fit);
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(fit).catch(() => {});
+  }
+}
+
+/* ------------------------------------------------------------
    Boot
    ------------------------------------------------------------ */
 document.addEventListener("DOMContentLoaded", () => {
@@ -494,4 +527,5 @@ document.addEventListener("DOMContentLoaded", () => {
   revealDynamic();
   initContactForm();
   initFooterYear();
+  initHeroFit();
 });
